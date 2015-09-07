@@ -1,0 +1,52 @@
+Simple Excel
+============
+
+*By [endroid](http://endroid.nl/)*
+
+[![Latest Stable Version](http://img.shields.io/packagist/v/endroid/simple-excel.svg)](https://packagist.org/packages/endroid/simple-excel)
+[![Build Status](http://img.shields.io/travis/endroid/SimpleExcel.svg)](http://travis-ci.org/endroid/SimpleExcel)
+[![Total Downloads](http://img.shields.io/packagist/dt/endroid/simple-excel.svg)](https://packagist.org/packages/endroid/simple-excel)
+[![License](http://img.shields.io/packagist/l/endroid/simple-excel.svg)](https://packagist.org/packages/endroid/simple-excel)
+
+Library for quickly loading and generating Excel files. Data can be loaded
+from and converted to an array, an Excel/CSV file or PHPExcel object.
+
+Great advantage of this library is the small amount of code needed to perform
+an import or export of data, given one of the above formats.
+
+## Installation
+
+Use [Composer](https://getcomposer.org/) to install the library.
+
+``` bash
+$ composer require endroid/simple-excel
+```
+
+## Usage
+
+```php
+<?php
+
+use Endroid\SimpleExcel\SimpleExcel;
+
+$excel = new SimpleExcel();
+$excel->loadFromFile(__DIR__.'/../Resources/data/data.xlsx');
+$excel->loadFromArray(array(
+    'Sheet A' => array(
+        array('col1' => 'a', 'col2' => 'b', 'col3' => 'c'),
+        array('col1' => 'b', 'col2' => 'c', 'col3' => 'd')
+    )
+));
+
+$excel->output('excel.csv', array('Sheet A'));
+
+## Versioning
+
+Version numbers follow the MAJOR.MINOR.PATCH scheme. Backwards compatible
+changes will be kept to a minimum but be aware that these can occur. Lock
+your dependencies for production and test your code when upgrading.
+
+## License
+
+This bundle is under the MIT license. For the full copyright and license
+information please view the LICENSE file that was distributed with this source code.
