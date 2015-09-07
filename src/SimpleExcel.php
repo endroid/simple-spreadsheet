@@ -158,8 +158,8 @@ class SimpleExcel
         $sheets = array();
 
         foreach ($this->sheets as $sheetName => $sheet) {
-            if (in_array($sheetName, $sheetNames)) {
-                $sheets[] = $sheet;
+            if (count($sheetNames) == 0 || in_array($sheetName, $sheetNames)) {
+                $sheets[$sheetName] = $sheet;
             }
         }
 
