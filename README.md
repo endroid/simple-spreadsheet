@@ -32,13 +32,14 @@ use Endroid\SimpleExcel\SimpleExcel;
 $excel = new SimpleExcel();
 $excel->loadFromFile(__DIR__.'/../Resources/data/data.xlsx');
 $excel->loadFromArray(array(
-    'Sheet A' => array(
-        array('col1' => 'a', 'col2' => 'b', 'col3' => 'c'),
-        array('col1' => 'b', 'col2' => 'c', 'col3' => 'd')
+    'Players' => array(
+        array('name' => 'L. Messi', 'club' => 'Barcelona'),
+        array('name' => 'C. Ronaldo', 'club' => 'Real Madrid')
     )
 ));
 
-$excel->output('excel.csv', array('Sheet A'));
+$excel->output('players.csv', array('Players'));
+```
 
 ## Versioning
 
