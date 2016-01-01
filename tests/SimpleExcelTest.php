@@ -24,8 +24,8 @@ class SimpleExcelTest extends PHPUnit_Framework_TestCase
         $excel->loadFromArray(array(
             'Sheet A' => array(
                 array('col1' => 'a', 'col2' => 'b', 'col3' => 'c'),
-                array('col1' => 'b', 'col2' => 'c', 'col3' => 'd')
-            )
+                array('col1' => 'b', 'col2' => 'c', 'col3' => 'd'),
+            ),
         ));
 
         $data = $excel->saveToArray();
