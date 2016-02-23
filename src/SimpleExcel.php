@@ -167,20 +167,6 @@ class SimpleExcel
     }
 
     /**
-     * Saves to a file.
-     *
-     * @param string $filename
-     * @param array  $sheetNames
-     */
-    public function saveToFile($filename, array $sheetNames = array())
-    {
-        $excel = $this->saveToExcel($sheetNames);
-
-        $writer = $this->getWriterByFilename($excel, $filename);
-        $writer->save($filename);
-    }
-
-    /**
      * Saves to an Excel document.
      *
      * @param array $sheetNames
@@ -230,34 +216,54 @@ class SimpleExcel
     }
 
     /**
-     * Outputs the file.
+     * Saves to a file.
      *
      * @param string $filename
      * @param array  $sheetNames
      */
-    public function output($filename, array $sheetNames = array())
+    public function saveToFile($filename, array $sheetNames = array())
     {
-        $excel = $this->saveToExcel($sheetNames);
-
-        ob_end_clean();
-
-        $this->setHeadersForFilename($filename);
-
-        $writer = $this->getWriterByFilename($excel, $filename);
-        $writer->save('php://output');
-        die;
+        $writer = $this->getWriterByFilename($filename, $sheetNames);
+        $writer->save($filename);
     }
 
     /**
-     * Sets the response headers for the given file name.
+     * Saves to output.
      *
-     * @param string $filename
+     * @param $filename
+     * @param array $sheetNames
+     * @param bool  $setHeaders
+     *
+     * @throws Exception
      */
-    protected function setHeadersForFilename($filename)
+    public function saveToOutput($filename, array $sheetNames = array(), $setHeaders = true)
     {
-        header('Content-Disposition: attachment; filename='.$filename);
-        header('Cache-Control: max-age=0');
-        header('Content-type: '.$this->getContentTypeByFilename($filename).'; charset=utf-8');
+        if ($setHeaders) {
+            $headers = $this->getHeadersByFilename($filename);
+            foreach ($headers as $key => $value) {
+                header($key.': '.$value);
+            }
+        }
+
+        $writer = $this->getWriterByFilename($filename, $sheetNames);
+        $writer->save('php://output');
+    }
+
+    /**
+     * Saves to a string.
+     *
+     * @param $filename
+     * @param array $sheetNames
+     *
+     * @return string
+     */
+    public function saveToString($filename, array $sheetNames = array())
+    {
+        ob_start();
+
+        $this->saveToOutput($filename, $sheetNames, false);
+
+        return ob_get_clean();
     }
 
     /**
@@ -283,14 +289,14 @@ class SimpleExcel
     /**
      * Returns the writer for a specific file name.
      *
-     * @param PHPExcel $excel
-     * @param string   $filename
+     * @param string $filename
+     * @param array  $sheetNames
      *
      * @return WriterInterface
      *
      * @throws Exception
      */
-    protected function getWriterByFilename($excel, $filename)
+    public function getWriterByFilename($filename, array $sheetNames = array())
     {
         $extension = $this->getExtension($filename);
 
@@ -298,7 +304,27 @@ class SimpleExcel
             throw new Exception(sprintf('No writer defined for file extension "%s"', $extension));
         }
 
+        $excel = $this->saveToExcel($sheetNames);
+
         return PHPExcel_IOFactory::createWriter($excel, $this->writers[$extension]);
+    }
+
+    /**
+     * Returns the headers for a specific file name.
+     *
+     * @param $filename
+     *
+     * @return array
+     */
+    public function getHeadersByFilename($filename)
+    {
+        $headers = array(
+            'Content-Disposition' => 'attachment; filename='.$filename,
+            'Cache-Control' => 'max-age=0',
+            'Content-Type' => $this->getContentTypeByFilename($filename).'; charset=utf-8',
+        );
+
+        return $headers;
     }
 
     /**
