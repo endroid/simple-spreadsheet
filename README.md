@@ -38,8 +38,11 @@ $excel->loadFromArray(array(
     )
 ));
 
-$excel->output('players.csv', array('Players'));
+$excel->saveToOutput('players.csv', array('Players'));
 ```
+
+You can also use the saveToString and getHeadersByFilename methods to build a
+Response object instead of directly outputting to the browser.
 
 ## Versioning
 
