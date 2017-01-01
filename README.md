@@ -31,14 +31,14 @@ use Endroid\SimpleExcel\SimpleExcel;
 
 $excel = new SimpleExcel();
 $excel->loadFromFile(__DIR__.'/../Resources/data/data.xlsx');
-$excel->loadFromArray(array(
-    'Players' => array(
-        array('name' => 'L. Messi', 'club' => 'Barcelona'),
-        array('name' => 'C. Ronaldo', 'club' => 'Real Madrid')
-    )
-));
+$excel->loadFromArray([
+    'Players' => [
+        ['name' => 'L. Messi', 'club' => 'Barcelona'],
+        ['name' => 'C. Ronaldo', 'club' => 'Real Madrid']
+    ]
+]);
 
-$excel->saveToOutput('players.csv', array('Players'));
+$excel->saveToOutput('players.csv', ['Players']);
 ```
 
 You can also use the saveToString and getHeadersByFilename methods to build a

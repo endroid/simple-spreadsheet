@@ -20,20 +20,20 @@ class SimpleExcel
     /**
      * @var array
      */
-    protected $contentTypes = array(
+    protected $contentTypes = [
         'csv' => 'text/csv',
         'xls' => 'application/vnd.ms-excel',
         'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    );
+    ];
 
     /**
      * @var array
      */
-    protected $writers = array(
+    protected $writers = [
         'csv' => 'CSV',
         'xls' => 'Excel5',
         'xlsx' => 'Excel2007',
-    );
+    ];
 
     /**
      * @var array
@@ -45,7 +45,7 @@ class SimpleExcel
      */
     public function __construct()
     {
-        $this->sheets = array();
+        $this->sheets = [];
     }
 
     /**
@@ -57,7 +57,7 @@ class SimpleExcel
     {
         // If the data is not multidimensional make it so
         if (!is_array(current($data))) {
-            $data = array($data);
+            $data = [$data];
         }
 
         foreach ($data as $sheetName => $sheet) {
@@ -71,7 +71,7 @@ class SimpleExcel
      * @param string $filename
      * @param array  $sheetNames
      */
-    public function loadFromFile($filename, array $sheetNames = array())
+    public function loadFromFile($filename, array $sheetNames = [])
     {
         $excel = PHPExcel_IOFactory::load($filename);
 
@@ -84,7 +84,7 @@ class SimpleExcel
      * @param PHPExcel $excel
      * @param array    $sheetNames
      */
-    public function loadFromExcel(PHPExcel $excel, array $sheetNames = array())
+    public function loadFromExcel(PHPExcel $excel, array $sheetNames = [])
     {
         foreach ($excel->getWorksheetIterator() as $sheet) {
             if (count($sheetNames) == 0 || in_array($sheet->getTitle(), $sheetNames)) {
@@ -100,7 +100,7 @@ class SimpleExcel
      */
     public function loadFromSheet(PHPExcel_Worksheet $excelSheet)
     {
-        $sheet = array();
+        $sheet = [];
 
         $sheetData = $excelSheet->toArray('', false, false);
 
@@ -130,7 +130,7 @@ class SimpleExcel
             }
 
             // Map data to column names
-            $associativeRow = array();
+            $associativeRow = [];
             foreach ($row as $key => $value) {
                 if (!isset($columns[$key])) {
                     continue;
@@ -153,9 +153,9 @@ class SimpleExcel
      *
      * @return array
      */
-    public function saveToArray(array $sheetNames = array())
+    public function saveToArray(array $sheetNames = [])
     {
-        $sheets = array();
+        $sheets = [];
 
         foreach ($this->sheets as $sheetName => $sheet) {
             if (count($sheetNames) == 0 || in_array($sheetName, $sheetNames)) {
@@ -173,7 +173,7 @@ class SimpleExcel
      *
      * @return PHPExcel
      */
-    public function saveToExcel(array $sheetNames = array())
+    public function saveToExcel(array $sheetNames = [])
     {
         $excel = new PHPExcel();
         $excel->removeSheetByIndex(0);
@@ -221,7 +221,7 @@ class SimpleExcel
      * @param string $filename
      * @param array  $sheetNames
      */
-    public function saveToFile($filename, array $sheetNames = array())
+    public function saveToFile($filename, array $sheetNames = [])
     {
         $writer = $this->getWriterByFilename($filename, $sheetNames);
         $writer->save($filename);
@@ -236,7 +236,7 @@ class SimpleExcel
      *
      * @throws Exception
      */
-    public function saveToOutput($filename, array $sheetNames = array(), $setHeaders = true)
+    public function saveToOutput($filename, array $sheetNames = [], $setHeaders = true)
     {
         if ($setHeaders) {
             $headers = $this->getHeadersByFilename($filename);
@@ -257,7 +257,7 @@ class SimpleExcel
      *
      * @return string
      */
-    public function saveToString($filename, array $sheetNames = array())
+    public function saveToString($filename, array $sheetNames = [])
     {
         ob_start();
 
@@ -296,7 +296,7 @@ class SimpleExcel
      *
      * @throws Exception
      */
-    public function getWriterByFilename($filename, array $sheetNames = array())
+    public function getWriterByFilename($filename, array $sheetNames = [])
     {
         $extension = $this->getExtension($filename);
 
@@ -318,11 +318,11 @@ class SimpleExcel
      */
     public function getHeadersByFilename($filename)
     {
-        $headers = array(
+        $headers = [
             'Content-Disposition' => 'attachment; filename='.$filename,
             'Cache-Control' => 'max-age=0',
             'Content-Type' => $this->getContentTypeByFilename($filename).'; charset=utf-8',
-        );
+        ];
 
         return $headers;
     }
