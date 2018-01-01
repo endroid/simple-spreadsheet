@@ -1,10 +1,9 @@
-Simple Excel
-============
+# Simple Excel
 
-*By [endroid](http://endroid.nl/)*
+*By [endroid](https://endroid.nl/)*
 
 [![Latest Stable Version](http://img.shields.io/packagist/v/endroid/simple-excel.svg)](https://packagist.org/packages/endroid/simple-excel)
-[![Build Status](http://img.shields.io/travis/endroid/SimpleExcel.svg)](http://travis-ci.org/endroid/SimpleExcel)
+[![Build Status](http://img.shields.io/travis/endroid/simple-excel.svg)](http://travis-ci.org/endroid/simple-excel)
 [![Total Downloads](http://img.shields.io/packagist/dt/endroid/simple-excel.svg)](https://packagist.org/packages/endroid/simple-excel)
 [![License](http://img.shields.io/packagist/l/endroid/simple-excel.svg)](https://packagist.org/packages/endroid/simple-excel)
 
