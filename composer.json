@@ -1,7 +1,7 @@
 {
     "name": "endroid/simple-excel",
     "description": "Endroid Simple Excel",
-    "keywords": ["endroid", "sipmle", "excel", "php"],
+    "keywords": ["endroid", "simple", "excel", "php"],
     "homepage": "https://github.com/endroid/simple-excel",
     "type": "library",
     "license": "MIT",
