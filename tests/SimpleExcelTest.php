@@ -30,8 +30,8 @@ class SimpleExcelTest extends PHPUnit_Framework_TestCase
 
         $data = $excel->saveToArray();
 
-        $this->assertTrue(count($data) == 3);
-        $this->assertTrue(count($data['Sheet A']) == 2);
+        $this->assertTrue(3 == count($data));
+        $this->assertTrue(2 == count($data['Sheet A']));
         $this->assertNull($data['sheet1'][1]['col2']);
     }
 }

@@ -87,7 +87,7 @@ class SimpleExcel
     public function loadFromExcel(PHPExcel $excel, array $sheetNames = [])
     {
         foreach ($excel->getWorksheetIterator() as $sheet) {
-            if (count($sheetNames) == 0 || in_array($sheet->getTitle(), $sheetNames)) {
+            if (0 == count($sheetNames) || in_array($sheet->getTitle(), $sheetNames)) {
                 $this->loadFromSheet($sheet);
             }
         }
@@ -114,7 +114,7 @@ class SimpleExcel
 
         // Remove headers from the end until first name is found
         for ($i = count($columns) - 1; $i >= 0; --$i) {
-            if ($columns[$i] == '') {
+            if ('' == $columns[$i]) {
                 unset($columns[$i]);
             } else {
                 break;
@@ -123,9 +123,8 @@ class SimpleExcel
 
         // Next rows contain the actual data
         foreach ($sheetData as $row) {
-
             // Ignore empty rows
-            if (trim(implode('', $row)) == '') {
+            if ('' == trim(implode('', $row))) {
                 continue;
             }
 
@@ -135,7 +134,7 @@ class SimpleExcel
                 if (!isset($columns[$key])) {
                     continue;
                 }
-                if (strtolower($value) == 'null') {
+                if ('null' == strtolower($value)) {
                     $value = null;
                 }
                 $associativeRow[$columns[$key]] = $value;
@@ -158,7 +157,7 @@ class SimpleExcel
         $sheets = [];
 
         foreach ($this->sheets as $sheetName => $sheet) {
-            if (count($sheetNames) == 0 || in_array($sheetName, $sheetNames)) {
+            if (0 == count($sheetNames) || in_array($sheetName, $sheetNames)) {
                 $sheets[$sheetName] = $sheet;
             }
         }
@@ -179,7 +178,6 @@ class SimpleExcel
         $excel->removeSheetByIndex(0);
 
         foreach ($this->sheets as $sheetName => $sheet) {
-
             // Only process requested sheets
             if (count($sheetNames) > 0 && !in_array($sheetName, $sheetNames)) {
                 continue;
@@ -189,7 +187,7 @@ class SimpleExcel
             $excelSheet->setTitle($sheetName);
 
             // When no content is available leave sheet empty
-            if (count($sheet) == 0) {
+            if (0 == count($sheet)) {
                 continue;
             }
 
@@ -202,7 +200,7 @@ class SimpleExcel
             foreach ($sheet as $row) {
                 $colId = ord('A');
                 foreach ($row as $value) {
-                    if ($value === null) {
+                    if (null === $value) {
                         $value = 'NULL';
                     }
                     $excelSheet->setCellValue(chr($colId).$rowId, $value);
