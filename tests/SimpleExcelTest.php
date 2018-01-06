@@ -10,9 +10,9 @@
 namespace Endroid\SimpleExcel\SimpleExcelTest;
 
 use Endroid\SimpleExcel\SimpleExcel;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class SimpleExcelTest extends PHPUnit_Framework_TestCase
+class SimpleExcelTest extends TestCase
 {
     /**
      * Tests load and save.
