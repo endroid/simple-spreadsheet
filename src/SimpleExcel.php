@@ -10,50 +10,33 @@
 namespace Endroid\SimpleExcel;
 
 use Exception;
-use PHPExcel;
-use PHPExcel_IOFactory;
-use PHPExcel_Worksheet;
-use PhpOffice\PhpWord\Writer\WriterInterface;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Writer\IWriter;
 
 class SimpleExcel
 {
-    /**
-     * @var array
-     */
-    protected $contentTypes = [
+    private $contentTypes = [
         'csv' => 'text/csv',
         'xls' => 'application/vnd.ms-excel',
         'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     ];
 
-    /**
-     * @var array
-     */
-    protected $writers = [
-        'csv' => 'CSV',
-        'xls' => 'Excel5',
-        'xlsx' => 'Excel2007',
+    private $writers = [
+        'csv' => 'Csv',
+        'xls' => 'Xls',
+        'xlsx' => 'Xlsx',
     ];
 
-    /**
-     * @var array
-     */
-    protected $sheets;
+    private $sheets;
 
-    /**
-     * Creates a new instance.
-     */
     public function __construct()
     {
         $this->sheets = [];
     }
 
-    /**
-     * Loads sheets from an array.
-     *
-     * @param array $data
-     */
-    public function loadFromArray(array $data)
+    public function loadFromArray(array $data): void
     {
         // If the data is not multidimensional make it so
         if (!is_array(current($data))) {
@@ -65,26 +48,14 @@ class SimpleExcel
         }
     }
 
-    /**
-     * Loads sheets from a file.
-     *
-     * @param string $filename
-     * @param array  $sheetNames
-     */
-    public function loadFromFile($filename, array $sheetNames = [])
+    public function loadFromFile(string $filename, array $sheetNames = []): void
     {
-        $excel = PHPExcel_IOFactory::load($filename);
+        $excel = IOFactory::load($filename);
 
         $this->loadFromExcel($excel, $sheetNames);
     }
 
-    /**
-     * Loads sheets from an Excel document.
-     *
-     * @param PHPExcel $excel
-     * @param array    $sheetNames
-     */
-    public function loadFromExcel(PHPExcel $excel, array $sheetNames = [])
+    public function loadFromExcel(Spreadsheet $excel, array $sheetNames = []): void
     {
         foreach ($excel->getWorksheetIterator() as $sheet) {
             if (0 == count($sheetNames) || in_array($sheet->getTitle(), $sheetNames)) {
@@ -93,12 +64,7 @@ class SimpleExcel
         }
     }
 
-    /**
-     * Loads an Excel document sheet.
-     *
-     * @param PHPExcel_Worksheet $excelSheet
-     */
-    public function loadFromSheet(PHPExcel_Worksheet $excelSheet)
+    public function loadFromSheet(Worksheet $excelSheet): void
     {
         $sheet = [];
 
@@ -145,14 +111,7 @@ class SimpleExcel
         $this->sheets[$excelSheet->getTitle()] = $sheet;
     }
 
-    /**
-     * Saves to an array.
-     *
-     * @param array $sheetNames
-     *
-     * @return array
-     */
-    public function saveToArray(array $sheetNames = [])
+    public function saveToArray(array $sheetNames = []): array
     {
         $sheets = [];
 
@@ -165,16 +124,9 @@ class SimpleExcel
         return $sheets;
     }
 
-    /**
-     * Saves to an Excel document.
-     *
-     * @param array $sheetNames
-     *
-     * @return PHPExcel
-     */
-    public function saveToExcel(array $sheetNames = [])
+    public function saveToExcel(array $sheetNames = []): Spreadsheet
     {
-        $excel = new PHPExcel();
+        $excel = new Spreadsheet();
         $excel->removeSheetByIndex(0);
 
         foreach ($this->sheets as $sheetName => $sheet) {
@@ -213,28 +165,13 @@ class SimpleExcel
         return $excel;
     }
 
-    /**
-     * Saves to a file.
-     *
-     * @param string $filename
-     * @param array  $sheetNames
-     */
-    public function saveToFile($filename, array $sheetNames = [])
+    public function saveToFile(string $filename, array $sheetNames = []): void
     {
         $writer = $this->getWriterByFilename($filename, $sheetNames);
         $writer->save($filename);
     }
 
-    /**
-     * Saves to output.
-     *
-     * @param $filename
-     * @param array $sheetNames
-     * @param bool  $setHeaders
-     *
-     * @throws Exception
-     */
-    public function saveToOutput($filename, array $sheetNames = [], $setHeaders = true)
+    public function saveToOutput(string $filename, array $sheetNames = [], bool $setHeaders = true): void
     {
         if ($setHeaders) {
             $headers = $this->getHeadersByFilename($filename);
@@ -247,15 +184,7 @@ class SimpleExcel
         $writer->save('php://output');
     }
 
-    /**
-     * Saves to a string.
-     *
-     * @param $filename
-     * @param array $sheetNames
-     *
-     * @return string
-     */
-    public function saveToString($filename, array $sheetNames = [])
+    public function saveToString(string $filename, array $sheetNames = []): string
     {
         ob_start();
 
@@ -264,16 +193,7 @@ class SimpleExcel
         return ob_get_clean();
     }
 
-    /**
-     * Returns the content type for a specific file name.
-     *
-     * @param $filename
-     *
-     * @return string
-     *
-     * @throws Exception
-     */
-    protected function getContentTypeByFilename($filename)
+    protected function getContentTypeByFilename($filename): string
     {
         $extension = $this->getExtension($filename);
 
@@ -284,17 +204,7 @@ class SimpleExcel
         return $this->contentTypes[$extension];
     }
 
-    /**
-     * Returns the writer for a specific file name.
-     *
-     * @param string $filename
-     * @param array  $sheetNames
-     *
-     * @return WriterInterface
-     *
-     * @throws Exception
-     */
-    public function getWriterByFilename($filename, array $sheetNames = [])
+    public function getWriterByFilename(string $filename, array $sheetNames = []): IWriter
     {
         $extension = $this->getExtension($filename);
 
@@ -304,17 +214,10 @@ class SimpleExcel
 
         $excel = $this->saveToExcel($sheetNames);
 
-        return PHPExcel_IOFactory::createWriter($excel, $this->writers[$extension]);
+        return IOFactory::createWriter($excel, $this->writers[$extension]);
     }
 
-    /**
-     * Returns the headers for a specific file name.
-     *
-     * @param $filename
-     *
-     * @return array
-     */
-    public function getHeadersByFilename($filename)
+    public function getHeadersByFilename(string $filename): array
     {
         $headers = [
             'Content-Disposition' => 'attachment; filename='.$filename,
@@ -325,14 +228,7 @@ class SimpleExcel
         return $headers;
     }
 
-    /**
-     * Returns the extension of a file name.
-     *
-     * @param $filename
-     *
-     * @return string
-     */
-    protected function getExtension($filename)
+    private function getExtension(string $filename): string
     {
         return strtolower(substr(strrchr($filename, '.'), 1));
     }
