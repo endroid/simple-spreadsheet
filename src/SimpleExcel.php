@@ -144,7 +144,7 @@ class SimpleExcel
             }
 
             // Set column headers
-            $headers = array_keys($sheet[0]);
+            $headers = array_keys(current($sheet));
             array_unshift($sheet, $headers);
 
             // Place values in sheet
