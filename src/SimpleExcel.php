@@ -9,11 +9,14 @@
 
 namespace Endroid\SimpleExcel;
 
+use Endroid\SimpleExcel\Exception\SimpleExcelException;
 use Exception;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Writer\IWriter;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 class SimpleExcel
 {
@@ -182,6 +185,22 @@ class SimpleExcel
 
         $writer = $this->getWriterByFilename($filename, $sheetNames);
         $writer->save('php://output');
+    }
+
+    public function saveToResponse(string $filename, array $sheetNames = []): Response
+    {
+        $responseClass = 'Symfony\Component\HttpFoundation\Response';
+        if (!class_exists($responseClass)) {
+            throw new SimpleExcelException('Class "'.$responseClass.'" not found: make sure symfony/http-foundation is installed');
+        }
+
+        $response = new Response($this->saveToString($filename, $sheetNames));
+        $response->headers->add([
+            'Content-Type' => $this->getHeadersByFilename($filename),
+            'Content-Disposition' => $response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_INLINE, $filename)
+        ]);
+
+        return $response;
     }
 
     public function saveToString(string $filename, array $sheetNames = []): string
