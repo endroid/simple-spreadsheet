@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * (c) Jeroen van den Enden <info@endroid.nl>
  *
@@ -74,7 +76,7 @@ class SimpleExcel
         $sheetData = $excelSheet->toArray('', false, false);
 
         // Remove possible empty leading rows
-        while ($sheetData[0][0] == '' && count($sheetData) > 0) {
+        while ('' == $sheetData[0][0] && count($sheetData) > 0) {
             array_shift($sheetData);
         }
 
@@ -197,7 +199,7 @@ class SimpleExcel
         $response = new Response($this->saveToString($filename, $sheetNames));
         $response->headers->add([
             'Content-Type' => $this->getHeadersByFilename($filename),
-            'Content-Disposition' => $response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_INLINE, $filename)
+            'Content-Disposition' => $response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_INLINE, $filename),
         ]);
 
         return $response;
