@@ -211,7 +211,7 @@ class SimpleExcel
 
         $this->saveToOutput($filename, $sheetNames, false);
 
-        return ob_get_clean();
+        return (string) ob_get_clean();
     }
 
     protected function getContentTypeByFilename($filename): string
@@ -251,6 +251,6 @@ class SimpleExcel
 
     private function getExtension(string $filename): string
     {
-        return strtolower(substr(strrchr($filename, '.'), 1));
+        return strtolower(substr((string) strrchr($filename, '.'), 1));
     }
 }
