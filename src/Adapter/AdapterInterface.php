@@ -15,7 +15,7 @@ interface AdapterInterface
 {
     public function load($data, array $filterSheets = null): array;
 
-    public function save(array $data, array $filterSheets = null);
+    public function save(array $data, array $filterSheets = null, array $options = []);
 
     public function supports($data): bool;
 

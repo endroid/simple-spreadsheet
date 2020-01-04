@@ -26,7 +26,7 @@ class ArrayAdapter extends AbstractAdapter
         return $sheets;
     }
 
-    public function save(array $data, array $sheetNames = null)
+    public function save(array $data, array $sheetNames = null, array $options = [])
     {
         $sheets = [];
 

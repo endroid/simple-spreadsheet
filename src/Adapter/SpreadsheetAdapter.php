@@ -11,53 +11,105 @@ declare(strict_types=1);
 
 namespace Endroid\SimpleSpreadsheet\Adapter;
 
+use Endroid\SimpleSpreadsheet\Exception\SimpleSpreadsheetException;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 class SpreadsheetAdapter extends AbstractAdapter
 {
     public function load($data, array $sheetNames = null): array
     {
+        if (!$data instanceof Spreadsheet) {
+            throw new SimpleSpreadsheetException('Invalid spreadsheet data');
+        }
+
+        $sheets = [];
+
+        foreach ($data->getWorksheetIterator() as $sheet) {
+            if (null === $sheetNames || in_array($sheet->getTitle(), $sheetNames)) {
+                $sheetData = $sheet->toArray('', false, false);
+
+                // Remove possible empty leading rows
+                while ('' == $sheetData[0][0] && count($sheetData) > 0) {
+                    array_shift($sheetData);
+                }
+
+                // First row always contains the headers
+                $columns = array_shift($sheetData);
+
+                // Remove headers from the end until first name is found
+                for ($i = count($columns) - 1; $i >= 0; --$i) {
+                    if ('' == $columns[$i]) {
+                        unset($columns[$i]);
+                    } else {
+                        break;
+                    }
+                }
+
+                // Next rows contain the actual data
+                foreach ($sheetData as $row) {
+                    // Ignore empty rows
+                    if ('' == trim(implode('', $row))) {
+                        continue;
+                    }
+
+                    // Map data to column names
+                    $associativeRow = [];
+                    foreach ($row as $key => $value) {
+                        if (!isset($columns[$key])) {
+                            continue;
+                        }
+                        if ('null' == strtolower($value)) {
+                            $value = null;
+                        }
+                        $associativeRow[$columns[$key]] = $value;
+                    }
+                    $sheets[$sheet->getTitle()][] = $associativeRow;
+                }
+            }
+        }
+
+        return $sheets;
     }
 
-    public function save(array $data, array $sheetNames = null)
+    public function save(array $data, array $sheetNames = null, array $options = [])
     {
-        $excel = new Spreadsheet();
-        $excel->removeSheetByIndex(0);
+        $spreadsheet = new Spreadsheet();
+        $spreadsheet->removeSheetByIndex(0);
 
-        foreach ($this->sheets as $sheetName => $sheet) {
+        foreach ($data as $sheetName => $sheetData) {
             // Only process requested sheets
-            if (count($sheetNames) > 0 && !in_array($sheetName, $sheetNames)) {
+            if (null !== $sheetNames && !in_array($sheetName, $sheetNames)) {
                 continue;
             }
 
-            $excelSheet = $excel->createSheet();
-            $excelSheet->setTitle($sheetName);
+            $sheet = $spreadsheet->createSheet();
+            $sheet->setTitle($sheetName);
 
             // When no content is available leave sheet empty
-            if (0 == count($sheet)) {
+            if (0 == count($sheetData)) {
                 continue;
             }
 
             // Set column headers
-            $headers = array_keys(current($sheet));
-            array_unshift($sheet, $headers);
+            $headers = array_keys(current($sheetData));
+            array_unshift($sheetData, $headers);
 
             // Place values in sheet
             $rowId = 1;
-            foreach ($sheet as $row) {
+            foreach ($sheetData as $row) {
                 $colId = ord('A');
                 foreach ($row as $value) {
                     if (null === $value) {
                         $value = 'NULL';
                     }
-                    $excelSheet->setCellValue(chr($colId).$rowId, $value);
+                    $sheet->setCellValue(chr($colId).$rowId, $value);
                     ++$colId;
                 }
                 ++$rowId;
             }
         }
 
-        return $excel;
+        return $spreadsheet;
     }
 
     public function supports($data): bool

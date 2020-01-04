@@ -12,20 +12,25 @@ declare(strict_types=1);
 namespace Endroid\SimpleSpreadsheet\SimpleSpreadsheetTest;
 
 use Endroid\SimpleSpreadsheet\Adapter\ArrayAdapter;
+use Endroid\SimpleSpreadsheet\Adapter\FileAdapter;
 use Endroid\SimpleSpreadsheet\SimpleSpreadsheet;
 use PHPUnit\Framework\TestCase;
 
 class SimpleSpreadsheetTest extends TestCase
 {
     /**
-     * @testdox Test load and save
+     * @testdox Append sheets and rows
      */
-    public function testLoadAndSave()
+    public function testAppend()
     {
-        $spreadsheet = new SimpleSpreadsheet();
-        $spreadsheet->load(__DIR__.'/data/data.xlsx');
+        $spreadsheet = $this->loadSpreadsheet();
+
         $spreadsheet->load([
-            'Sheet A' => [
+            'sheet1' => [
+                ['col1' => 'a', 'col2' => 'b', 'col3' => 'c'],
+                ['col1' => 'b', 'col2' => 'c', 'col3' => 'd'],
+            ],
+            'sheet3' => [
                 ['col1' => 'a', 'col2' => 'b', 'col3' => 'c'],
                 ['col1' => 'b', 'col2' => 'c', 'col3' => 'd'],
             ],
@@ -33,8 +38,29 @@ class SimpleSpreadsheetTest extends TestCase
 
         $data = $spreadsheet->save(ArrayAdapter::class);
 
-        $this->assertTrue(3 == count($data));
-        $this->assertTrue(2 == count($data['Sheet A']));
+        $this->assertEquals(3, count($data));
+        $this->assertEquals(4, count($data['sheet1']));
         $this->assertNull($data['sheet1'][1]['col2']);
+    }
+
+    /**
+     * @testdox Save to file
+     */
+    public function testSaveToFile(): void
+    {
+        $spreadsheet = $this->loadSpreadsheet();
+
+        $targetPath = __DIR__.'/output/data.xlsx';
+        $spreadsheet->save(FileAdapter::class, ['sheet1'], ['path' => $targetPath]);
+
+        $this->assertFileExists($targetPath);
+    }
+
+    private function loadSpreadsheet(): SimpleSpreadsheet
+    {
+        $spreadsheet = new SimpleSpreadsheet();
+        $spreadsheet->load(__DIR__.'/data/data.xlsx');
+
+        return $spreadsheet;
     }
 }

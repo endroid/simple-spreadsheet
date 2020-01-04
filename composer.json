@@ -1,8 +1,8 @@
 {
-    "name": "endroid/simple-excel",
-    "description": "Endroid Simple Excel",
-    "keywords": ["endroid", "simple", "excel", "php"],
-    "homepage": "https://github.com/endroid/simple-excel",
+    "name": "endroid/simple-spreadsheet",
+    "description": "Endroid Simple Spreadsheet",
+    "keywords": ["endroid", "simple", "spreadsheet", "php"],
+    "homepage": "https://github.com/endroid/simple-spreadsheet",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -32,7 +32,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.x-dev"
+            "dev-master": "3.x-dev"
         }
     },
     "config": {

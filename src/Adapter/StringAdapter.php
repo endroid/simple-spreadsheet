@@ -15,15 +15,24 @@ class StringAdapter extends AbstractAdapter
 {
     public function load($data, array $sheetNames = null): array
     {
+        return [];
     }
 
-    public function save(array $data, array $sheetNames = null)
+    public function save(array $data, array $sheetNames = null, array $options = [])
     {
-        ob_start();
-
-        $this->saveToOutput($filename, $sheetNames, false);
-
-        return (string) ob_get_clean();
+//        ob_start();
+//
+//        if ($setHeaders) {
+//            $headers = $this->getHeadersByFilename($filename);
+//            foreach ($headers as $key => $value) {
+//                header($key.': '.$value);
+//            }
+//        }
+//
+//        $writer = $this->getWriterByFilename($filename, $sheetNames);
+//        $writer->save('php://output');
+//
+//        return (string) ob_get_clean();
     }
 
     public function supports($data): bool

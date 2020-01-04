@@ -11,9 +11,10 @@ declare(strict_types=1);
 
 namespace Endroid\SimpleSpreadsheet\Adapter;
 
+use Endroid\SimpleSpreadsheet\Exception\SimpleSpreadsheetException;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
-class FileAdapter extends AbstractAdapter
+class FileAdapter extends SpreadsheetAdapter
 {
     private $contentTypes = [
         'csv' => 'text/csv',
@@ -21,21 +22,31 @@ class FileAdapter extends AbstractAdapter
         'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     ];
 
-    private $writers = [
-        'csv' => 'Csv',
-        'xls' => 'Xls',
-        'xlsx' => 'Xlsx',
-    ];
-
     public function load($data, array $sheetNames = null): array
     {
-        $excel = IOFactory::load($data);
+        $spreadsheet = IOFactory::load($data);
+
+        return parent::load($spreadsheet, $sheetNames);
     }
 
-    public function save(array $data, array $sheetNames = null)
+    public function save(array $data, array $sheetNames = null, array $options = [])
     {
-        $writer = $this->getWriterByFilename($filename, $sheetNames);
-        $writer->save($filename);
+        if (!isset($options['path'])) {
+            throw new SimpleSpreadsheetException('Please specify the output path via options');
+        }
+
+        $path = $options['path'];
+        $spreadsheet = parent::save($data, $sheetNames, $options);
+        $extension = strtolower(substr((string) strrchr($path, '.'), 1));
+        $writer = IOFactory::createWriter($spreadsheet, ucfirst($extension));
+
+//        $headers = [
+//            'Content-Disposition' => 'attachment; filename='.$filename,
+//            'Cache-Control' => 'max-age=0',
+//            'Content-Type' => $this->getContentTypeByFilename($filename).'; charset=utf-8',
+//        ];
+
+        $writer->save($path);
     }
 
     public function supports($data): bool
