@@ -14,12 +14,10 @@ namespace Endroid\SimpleSpreadsheet;
 use Endroid\SimpleSpreadsheet\Adapter\AdapterInterface;
 use Endroid\SimpleSpreadsheet\Adapter\ArrayAdapter;
 use Endroid\SimpleSpreadsheet\Adapter\FileAdapter;
+use Endroid\SimpleSpreadsheet\Adapter\ResponseAdapter;
 use Endroid\SimpleSpreadsheet\Adapter\SpreadsheetAdapter;
 use Endroid\SimpleSpreadsheet\Adapter\StringAdapter;
 use Endroid\SimpleSpreadsheet\Exception\SimpleSpreadsheetException;
-use Exception;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 class SimpleSpreadsheet
 {
@@ -38,6 +36,7 @@ class SimpleSpreadsheet
     {
         $this->registerAdapter(new ArrayAdapter());
         $this->registerAdapter(new FileAdapter());
+        $this->registerAdapter(new ResponseAdapter());
         $this->registerAdapter(new SpreadsheetAdapter());
         $this->registerAdapter(new StringAdapter());
     }
@@ -86,31 +85,4 @@ class SimpleSpreadsheet
 
         return $adapter->save($this->sheets, $sheetNames, $options);
     }
-
-//    public function saveToResponse(string $filename, array $sheetNames = []): Response
-//    {
-//        $responseClass = 'Symfony\Component\HttpFoundation\Response';
-//        if (!class_exists($responseClass)) {
-//            throw new SimpleSpreadsheetException('Class "'.$responseClass.'" not found: make sure symfony/http-foundation is installed');
-//        }
-//
-//        $response = new Response($this->saveToString($filename, $sheetNames));
-//        $response->headers->add([
-//            'Content-Type' => $this->getHeadersByFilename($filename),
-//            'Content-Disposition' => $response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_INLINE, $filename),
-//        ]);
-//
-//        return $response;
-//    }
-//
-//    protected function getContentTypeByFilename($filename): string
-//    {
-//        $extension = $this->getExtension($filename);
-//
-//        if (!isset($this->contentTypes[$extension])) {
-//            throw new Exception(sprintf('No content type defined for file extension "%s"', $extension));
-//        }
-//
-//        return $this->contentTypes[$extension];
-//    }
 }

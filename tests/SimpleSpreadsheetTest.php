@@ -13,8 +13,10 @@ namespace Endroid\SimpleSpreadsheet\SimpleSpreadsheetTest;
 
 use Endroid\SimpleSpreadsheet\Adapter\ArrayAdapter;
 use Endroid\SimpleSpreadsheet\Adapter\FileAdapter;
+use Endroid\SimpleSpreadsheet\Adapter\ResponseAdapter;
 use Endroid\SimpleSpreadsheet\SimpleSpreadsheet;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\Response;
 
 class SimpleSpreadsheetTest extends TestCase
 {
@@ -55,9 +57,29 @@ class SimpleSpreadsheetTest extends TestCase
         }
 
         $targetPath = __DIR__.'/output/data.xlsx';
-        $spreadsheet->save(FileAdapter::class, ['sheet1'], ['path' => $targetPath]);
+        $spreadsheet->save(
+            FileAdapter::class,
+            ['sheet1'],
+            ['path' => $targetPath]
+        );
 
         $this->assertFileExists($targetPath);
+    }
+
+    /**
+     * @testdox Save to response object
+     */
+    public function testSaveToResponse(): void
+    {
+        $spreadsheet = $this->loadSpreadsheet();
+
+        $response = $spreadsheet->save(
+            ResponseAdapter::class,
+            ['sheet1'],
+            ['filename' => 'data.xlsx']
+        );
+
+        $this->assertInstanceOf(Response::class, $response);
     }
 
     private function loadSpreadsheet(): SimpleSpreadsheet
