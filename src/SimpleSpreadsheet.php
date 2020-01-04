@@ -16,7 +16,6 @@ use Endroid\SimpleSpreadsheet\Adapter\ArrayAdapter;
 use Endroid\SimpleSpreadsheet\Adapter\FileAdapter;
 use Endroid\SimpleSpreadsheet\Adapter\ResponseAdapter;
 use Endroid\SimpleSpreadsheet\Adapter\SpreadsheetAdapter;
-use Endroid\SimpleSpreadsheet\Adapter\StringAdapter;
 use Endroid\SimpleSpreadsheet\Exception\SimpleSpreadsheetException;
 
 class SimpleSpreadsheet
@@ -38,7 +37,6 @@ class SimpleSpreadsheet
         $this->registerAdapter(new FileAdapter());
         $this->registerAdapter(new ResponseAdapter());
         $this->registerAdapter(new SpreadsheetAdapter());
-        $this->registerAdapter(new StringAdapter());
     }
 
     public function registerAdapter(AdapterInterface $adapter): void
