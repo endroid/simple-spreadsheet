@@ -9,10 +9,10 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Endroid\SimpleExcel\Exception;
+namespace Endroid\SimpleSpreadsheet\Exception;
 
 use Exception;
 
-class SimpleExcelException extends Exception
+class SimpleSpreadsheetException extends Exception
 {
 }

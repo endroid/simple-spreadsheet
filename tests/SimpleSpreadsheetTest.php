@@ -9,28 +9,29 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Endroid\SimpleExcel\SimpleExcelTest;
+namespace Endroid\SimpleSpreadsheet\SimpleSpreadsheetTest;
 
-use Endroid\SimpleExcel\SimpleExcel;
+use Endroid\SimpleSpreadsheet\Adapter\ArrayAdapter;
+use Endroid\SimpleSpreadsheet\SimpleSpreadsheet;
 use PHPUnit\Framework\TestCase;
 
-class SimpleExcelTest extends TestCase
+class SimpleSpreadsheetTest extends TestCase
 {
     /**
-     * Tests load and save.
+     * @testdox Test load and save
      */
     public function testLoadAndSave()
     {
-        $excel = new SimpleExcel();
-        $excel->loadFromFile(__DIR__.'/data/data.xlsx');
-        $excel->loadFromArray([
+        $spreadsheet = new SimpleSpreadsheet();
+        $spreadsheet->load(__DIR__.'/data/data.xlsx');
+        $spreadsheet->load([
             'Sheet A' => [
                 ['col1' => 'a', 'col2' => 'b', 'col3' => 'c'],
                 ['col1' => 'b', 'col2' => 'c', 'col3' => 'd'],
             ],
         ]);
 
-        $data = $excel->saveToArray();
+        $data = $spreadsheet->save(ArrayAdapter::class);
 
         $this->assertTrue(3 == count($data));
         $this->assertTrue(2 == count($data['Sheet A']));

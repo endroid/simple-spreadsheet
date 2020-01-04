@@ -22,12 +22,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Endroid\\SimpleExcel\\": "src/"
+            "Endroid\\SimpleSpreadsheet\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Endroid\\SimpleExcel\\": "tests/"
+            "Endroid\\SimpleSpreadsheet\\": "tests/"
         }
     },
     "extra": {

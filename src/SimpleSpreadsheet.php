@@ -9,9 +9,14 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Endroid\SimpleExcel;
+namespace Endroid\SimpleSpreadsheet;
 
-use Endroid\SimpleExcel\Exception\SimpleExcelException;
+use Endroid\SimpleSpreadsheet\Adapter\AdapterInterface;
+use Endroid\SimpleSpreadsheet\Adapter\ArrayAdapter;
+use Endroid\SimpleSpreadsheet\Adapter\FileAdapter;
+use Endroid\SimpleSpreadsheet\Adapter\SpreadsheetAdapter;
+use Endroid\SimpleSpreadsheet\Adapter\StringAdapter;
+use Endroid\SimpleSpreadsheet\Exception\SimpleSpreadsheetException;
 use Exception;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -20,47 +25,67 @@ use PhpOffice\PhpSpreadsheet\Writer\IWriter;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
-class SimpleExcel
+class SimpleSpreadsheet
 {
-    private $contentTypes = [
-        'csv' => 'text/csv',
-        'xls' => 'application/vnd.ms-excel',
-        'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    ];
+    /** @var array[] */
+    private $sheets = [];
 
-    private $writers = [
-        'csv' => 'Csv',
-        'xls' => 'Xls',
-        'xlsx' => 'Xlsx',
-    ];
-
-    private $sheets;
+    /** @var AdapterInterface[] */
+    private $adapters = [];
 
     public function __construct()
     {
-        $this->sheets = [];
+        $this->registerDefaultAdapters();
+    }
+
+    private function registerDefaultAdapters(): void
+    {
+        $this->registerAdapter(new ArrayAdapter());
+        $this->registerAdapter(new FileAdapter());
+        $this->registerAdapter(new SpreadsheetAdapter());
+        $this->registerAdapter(new StringAdapter());
+    }
+
+    public function registerAdapter(AdapterInterface $adapter): void
+    {
+        $this->adapters[get_class($adapter)] = $adapter;
+        $this->prioritizeAdapters();
+    }
+
+    private function prioritizeAdapters(): void
+    {
+        uasort($this->adapters, function (AdapterInterface $adapter1, AdapterInterface $adapter2) {
+            return $adapter2->getPriority() - $adapter1->getPriority();
+        });
+    }
+
+    public function load($data, array $sheetNames = null): void
+    {
+        foreach ($this->adapters as $adapter) {
+            if ($adapter->supports($data)) {
+                $adapter->load($data, $sheetNames);
+                break;
+            }
+        }
+    }
+
+    public function save(string $adapterClass, array $sheetNames = null)
+    {
+        $adapter = $this->adapters[$adapterClass];
+
+        if (!$adapter instanceof AdapterInterface) {
+            throw new SimpleSpreadsheetException(sprintf('Adapter class "%s" not found', $adapterClass));
+        }
+
+        return $adapter->save($this->sheets, $sheetNames);
     }
 
     public function loadFromArray(array $data): void
     {
         // If the data is not multidimensional make it so
-        if (!is_array(current($data))) {
-            $data = [$data];
-        }
-
-        foreach ($data as $sheetName => $sheet) {
-            $this->sheets[$sheetName] = $sheet;
-        }
     }
 
-    public function loadFromFile(string $filename, array $sheetNames = []): void
-    {
-        $excel = IOFactory::load($filename);
-
-        $this->loadFromExcel($excel, $sheetNames);
-    }
-
-    public function loadFromExcel(Spreadsheet $excel, array $sheetNames = []): void
+    public function loadFromSpreadsheet(Spreadsheet $excel, array $sheetNames = []): void
     {
         foreach ($excel->getWorksheetIterator() as $sheet) {
             if (0 == count($sheetNames) || in_array($sheet->getTitle(), $sheetNames)) {
@@ -118,62 +143,6 @@ class SimpleExcel
 
     public function saveToArray(array $sheetNames = []): array
     {
-        $sheets = [];
-
-        foreach ($this->sheets as $sheetName => $sheet) {
-            if (0 == count($sheetNames) || in_array($sheetName, $sheetNames)) {
-                $sheets[$sheetName] = $sheet;
-            }
-        }
-
-        return $sheets;
-    }
-
-    public function saveToExcel(array $sheetNames = []): Spreadsheet
-    {
-        $excel = new Spreadsheet();
-        $excel->removeSheetByIndex(0);
-
-        foreach ($this->sheets as $sheetName => $sheet) {
-            // Only process requested sheets
-            if (count($sheetNames) > 0 && !in_array($sheetName, $sheetNames)) {
-                continue;
-            }
-
-            $excelSheet = $excel->createSheet();
-            $excelSheet->setTitle($sheetName);
-
-            // When no content is available leave sheet empty
-            if (0 == count($sheet)) {
-                continue;
-            }
-
-            // Set column headers
-            $headers = array_keys(current($sheet));
-            array_unshift($sheet, $headers);
-
-            // Place values in sheet
-            $rowId = 1;
-            foreach ($sheet as $row) {
-                $colId = ord('A');
-                foreach ($row as $value) {
-                    if (null === $value) {
-                        $value = 'NULL';
-                    }
-                    $excelSheet->setCellValue(chr($colId).$rowId, $value);
-                    ++$colId;
-                }
-                ++$rowId;
-            }
-        }
-
-        return $excel;
-    }
-
-    public function saveToFile(string $filename, array $sheetNames = []): void
-    {
-        $writer = $this->getWriterByFilename($filename, $sheetNames);
-        $writer->save($filename);
     }
 
     public function saveToOutput(string $filename, array $sheetNames = [], bool $setHeaders = true): void
@@ -193,7 +162,7 @@ class SimpleExcel
     {
         $responseClass = 'Symfony\Component\HttpFoundation\Response';
         if (!class_exists($responseClass)) {
-            throw new SimpleExcelException('Class "'.$responseClass.'" not found: make sure symfony/http-foundation is installed');
+            throw new SimpleSpreadsheetException('Class "'.$responseClass.'" not found: make sure symfony/http-foundation is installed');
         }
 
         $response = new Response($this->saveToString($filename, $sheetNames));
@@ -203,15 +172,6 @@ class SimpleExcel
         ]);
 
         return $response;
-    }
-
-    public function saveToString(string $filename, array $sheetNames = []): string
-    {
-        ob_start();
-
-        $this->saveToOutput($filename, $sheetNames, false);
-
-        return (string) ob_get_clean();
     }
 
     protected function getContentTypeByFilename($filename): string

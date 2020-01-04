@@ -1,16 +1,16 @@
-# Simple Excel
+# Simple Spreadsheet
 
 *By [endroid](https://endroid.nl/)*
 
-[![Latest Stable Version](http://img.shields.io/packagist/v/endroid/simple-excel.svg)](https://packagist.org/packages/endroid/simple-excel)
-[![Build Status](https://github.com/endroid/simple-excel/workflows/CI/badge.svg)](https://github.com/endroid/simple-excel/actions)
-[![Total Downloads](http://img.shields.io/packagist/dt/endroid/simple-excel.svg)](https://packagist.org/packages/endroid/simple-excel)
-[![License](http://img.shields.io/packagist/l/endroid/simple-excel.svg)](https://packagist.org/packages/endroid/simple-excel)
+[![Latest Stable Version](http://img.shields.io/packagist/v/endroid/simple-spreadsheet.svg)](https://packagist.org/packages/endroid/simple-spreadsheet)
+[![Build Status](https://github.com/endroid/simple-spreadsheet/workflows/CI/badge.svg)](https://github.com/endroid/simple-spreadsheet/actions)
+[![Total Downloads](http://img.shields.io/packagist/dt/endroid/simple-spreadsheet.svg)](https://packagist.org/packages/endroid/simple-spreadsheet)
+[![License](http://img.shields.io/packagist/l/endroid/simple-spreadsheet.svg)](https://packagist.org/packages/endroid/simple-spreadsheet)
 
-Library for quickly loading and generating Excel files. Data can be loaded
-from and converted to an array, an Excel/CSV file or PHPExcel object.
+Library for quickly importing and exporting spreadsheet data. Data can be loaded
+from and converted from / to an array, an Excel/CSV file or Spreadsheet object.
 
-Great advantage of this library is the small amount of code needed to perform
+The main advantage of this library is the small amount of code needed to perform
 an import or export of data, given one of the above formats.
 
 ## Installation
@@ -18,7 +18,7 @@ an import or export of data, given one of the above formats.
 Use [Composer](https://getcomposer.org/) to install the library.
 
 ``` bash
-$ composer require endroid/simple-excel
+$ composer require endroid/simple-spreadsheet
 ```
 
 ## Usage
@@ -26,18 +26,19 @@ $ composer require endroid/simple-excel
 ```php
 <?php
 
-use Endroid\SimpleExcel\SimpleExcel;
+use Endroid\SimpleSpreadsheet\Adapter\FileAdapter;
+use Endroid\SimpleSpreadsheet\SimpleSpreadsheet;
 
-$excel = new SimpleExcel();
-$excel->loadFromFile(__DIR__.'/../Resources/data/data.xlsx');
-$excel->loadFromArray([
+$spreadsheet = new SimpleSpreadsheet();
+$spreadsheet->load('data.xlsx'); // Load all sheets from data.xlsx
+$spreadsheet->load([
     'Players' => [
         ['name' => 'L. Messi', 'club' => 'Barcelona'],
         ['name' => 'C. Ronaldo', 'club' => 'Real Madrid']
     ]
 ]);
 
-$excel->saveToOutput('players.csv', ['Players']);
+$spreadsheet->save(FileAdapter::class, ['Players'], ['filename' => 'players.csv']);
 ```
 
 You can also use the saveToString and getHeadersByFilename methods to build a
