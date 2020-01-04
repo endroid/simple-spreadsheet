@@ -50,7 +50,9 @@ class SimpleSpreadsheetTest extends TestCase
     {
         $spreadsheet = $this->loadSpreadsheet();
 
-        mkdir(__DIR__.'/output');
+        if (!is_dir(__DIR__.'/output')) {
+            mkdir(__DIR__ . '/output');
+        }
 
         $targetPath = __DIR__.'/output/data.xlsx';
         $spreadsheet->save(FileAdapter::class, ['sheet1'], ['path' => $targetPath]);
