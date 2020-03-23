@@ -14,6 +14,7 @@ namespace Endroid\SimpleSpreadsheet;
 use Endroid\SimpleSpreadsheet\Adapter\AdapterInterface;
 use Endroid\SimpleSpreadsheet\Adapter\ArrayAdapter;
 use Endroid\SimpleSpreadsheet\Adapter\FileAdapter;
+use Endroid\SimpleSpreadsheet\Adapter\JsonAdapter;
 use Endroid\SimpleSpreadsheet\Adapter\ResponseAdapter;
 use Endroid\SimpleSpreadsheet\Adapter\SpreadsheetAdapter;
 use Endroid\SimpleSpreadsheet\Exception\SimpleSpreadsheetException;
@@ -35,6 +36,7 @@ class SimpleSpreadsheet
     {
         $this->registerAdapter(new ArrayAdapter());
         $this->registerAdapter(new FileAdapter());
+        $this->registerAdapter(new JsonAdapter());
         $this->registerAdapter(new ResponseAdapter());
         $this->registerAdapter(new SpreadsheetAdapter());
     }

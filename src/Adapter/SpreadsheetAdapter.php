@@ -58,7 +58,7 @@ class SpreadsheetAdapter extends AbstractAdapter
                         if (!isset($columns[$key])) {
                             continue;
                         }
-                        if ('null' == strtolower($value)) {
+                        if ('null' == strtolower(strval($value))) {
                             $value = null;
                         }
                         $associativeRow[$columns[$key]] = $value;
