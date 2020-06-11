@@ -15,10 +15,10 @@
         "php": ">=7.2",
         "endroid/installer": "^1.0.3",
         "phpoffice/phpspreadsheet": "^1.1",
-        "symfony/http-foundation": "^3.4||^4.2.12||^5.0"
+        "symfony/http-foundation": "^3.4||^4.0||^5.0"
     },
     "require-dev": {
-        "endroid/test": "dev-master"
+        "endroid/quality": "dev-master"
     },
     "autoload": {
         "psr-4": {
