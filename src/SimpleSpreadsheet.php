@@ -75,6 +75,39 @@ class SimpleSpreadsheet
         }
     }
 
+    public function createSheet(string $sheetName): void
+    {
+        if (isset($this->sheets[$sheetName])) {
+            throw new SimpleSpreadsheetException(sprintf('Sheet with name "%s" already exists', $sheetName));
+        }
+
+        $this->sheets[$sheetName] = [];
+    }
+
+    public function renameSheet(string $sourceName, string $targetName): void
+    {
+        $this->duplicateSheet($sourceName, $targetName);
+        unset($this->sheets[$sourceName]);
+    }
+
+    public function duplicateSheet(string $sourceName, string $targetName): void
+    {
+        if (!isset($this->sheets[$sourceName])) {
+            throw new SimpleSpreadsheetException(sprintf('Sheet with name "%s" does not exist', $sourceName));
+        }
+
+        $this->sheets[$targetName] = $this->sheets[$sourceName];
+    }
+
+    public function removeSheet(string $sheetName): void
+    {
+        if (!isset($this->sheets[$sheetName])) {
+            throw new SimpleSpreadsheetException(sprintf('Sheet with name "%s" does not exist', $sheetName));
+        }
+
+        unset($this->sheets[$sheetName]);
+    }
+
     public function save(string $adapterClass, array $sheetNames = null, array $options = [])
     {
         $adapter = $this->adapters[$adapterClass];
