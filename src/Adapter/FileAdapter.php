@@ -35,6 +35,8 @@ class FileAdapter extends SpreadsheetAdapter
         $writer = IOFactory::createWriter($spreadsheet, ucfirst($extension));
 
         $writer->save($path);
+
+        return null;
     }
 
     public function supports($data): bool

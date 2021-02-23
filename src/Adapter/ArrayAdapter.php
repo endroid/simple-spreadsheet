@@ -17,6 +17,10 @@ class ArrayAdapter extends AbstractAdapter
     {
         $sheets = [];
 
+        /**
+         * @var string       $sheetName
+         * @var array<mixed> $sheetData
+         */
         foreach ($data as $sheetName => $sheetData) {
             if (null === $sheetNames || in_array($sheetName, $sheetNames)) {
                 $sheets[$sheetName] = $sheetData;

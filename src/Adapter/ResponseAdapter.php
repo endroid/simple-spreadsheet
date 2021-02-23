@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 class ResponseAdapter extends SpreadsheetAdapter
 {
+    /** @var array<string, string> */
     private $contentTypesByExtension = [
         'csv' => 'text/csv',
         'xls' => 'application/vnd.ms-excel',

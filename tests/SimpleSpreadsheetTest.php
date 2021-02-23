@@ -53,7 +53,7 @@ class SimpleSpreadsheetTest extends TestCase
         $spreadsheet = $this->loadSpreadsheet();
 
         if (!is_dir(__DIR__.'/output')) {
-            mkdir(__DIR__ . '/output');
+            mkdir(__DIR__.'/output');
         }
 
         $targetPath = __DIR__.'/output/data.xlsx';

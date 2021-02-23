@@ -21,10 +21,10 @@ use Endroid\SimpleSpreadsheet\Exception\SimpleSpreadsheetException;
 
 class SimpleSpreadsheet
 {
-    /** @var array[] */
+    /** @var array<array<mixed>> */
     private $sheets = [];
 
-    /** @var AdapterInterface[] */
+    /** @var array<AdapterInterface> */
     private $adapters = [];
 
     public function __construct()
@@ -54,7 +54,11 @@ class SimpleSpreadsheet
         });
     }
 
-    public function load($data, array $sheetNames = null): void
+    /**
+     * @param mixed              $data
+     * @param array<string>|null $sheetNames
+     */
+    public function load($data, ?array $sheetNames = null): void
     {
         foreach ($this->adapters as $adapter) {
             if ($adapter->supports($data)) {
@@ -65,6 +69,7 @@ class SimpleSpreadsheet
         }
     }
 
+    /** @param array<string, array<mixed>> $sheets */
     private function append(array $sheets): void
     {
         foreach ($sheets as $sheetName => &$sheetData) {
@@ -108,6 +113,12 @@ class SimpleSpreadsheet
         unset($this->sheets[$sheetName]);
     }
 
+    /**
+     * @param array<string>|null $sheetNames
+     * @param array<mixed>       $options
+     *
+     * @return mixed
+     */
     public function save(string $adapterClass, array $sheetNames = null, array $options = [])
     {
         $adapter = $this->adapters[$adapterClass];
