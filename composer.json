@@ -29,6 +29,9 @@
             "Endroid\\SimpleSpreadsheet\\": "tests/"
         }
     },
+    "suggest": {
+        "roave/security-advisories": "Avoids installation of package versions with vulnerabilities"
+    },
     "extra": {
         "branch-alias": {
             "dev-master": "3.x-dev"
