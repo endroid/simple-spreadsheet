@@ -73,7 +73,9 @@ class SimpleSpreadsheet
     private function append(array $sheets): void
     {
         foreach ($sheets as $sheetName => &$sheetData) {
-            $this->sheets[$sheetName] = [];
+            if (!isset($this->sheets[$sheetName])) {
+                $this->sheets[$sheetName] = [];
+            }
             while (count($sheetData) > 0) {
                 $sheetDataRow = array_shift($sheetData);
                 $this->sheets[$sheetName][] = $sheetDataRow;
