@@ -33,7 +33,7 @@ class SpreadsheetAdapter extends AbstractAdapter
                     array_shift($sheetData);
                 }
 
-                // First row always contains the headers
+                // The first row always contains the headers
                 $columns = array_shift($sheetData);
 
                 // Remove headers from the end until first name is found
@@ -45,7 +45,10 @@ class SpreadsheetAdapter extends AbstractAdapter
                     }
                 }
 
-                // Next rows contain the actual data
+                // Headers are processed: now create the sheet array
+                $sheets[$sheet->getTitle()] = [];
+
+                // The following rows contain the actual data
                 foreach ($sheetData as $row) {
                     // Ignore empty rows
                     if ('' == trim(implode('', $row))) {
