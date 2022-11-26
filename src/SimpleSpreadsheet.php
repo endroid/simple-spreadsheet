@@ -2,13 +2,6 @@
 
 declare(strict_types=1);
 
-/*
- * (c) Jeroen van den Enden <info@endroid.nl>
- *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
- */
-
 namespace Endroid\SimpleSpreadsheet;
 
 use Endroid\SimpleSpreadsheet\Adapter\AdapterInterface;
@@ -22,10 +15,10 @@ use Endroid\SimpleSpreadsheet\Exception\SimpleSpreadsheetException;
 class SimpleSpreadsheet
 {
     /** @var array<array<mixed>> */
-    private $sheets = [];
+    private array $sheets = [];
 
     /** @var array<AdapterInterface> */
-    private $adapters = [];
+    private array $adapters = [];
 
     public function __construct()
     {

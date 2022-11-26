@@ -2,13 +2,6 @@
 
 declare(strict_types=1);
 
-/*
- * (c) Jeroen van den Enden <info@endroid.nl>
- *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
- */
-
 namespace Endroid\SimpleSpreadsheet\Adapter;
 
 use Endroid\SimpleSpreadsheet\Exception\SimpleSpreadsheetException;
@@ -19,7 +12,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 class ResponseAdapter extends SpreadsheetAdapter
 {
     /** @var array<string, string> */
-    private $contentTypesByExtension = [
+    private array $contentTypesByExtension = [
         'csv' => 'text/csv',
         'xls' => 'application/vnd.ms-excel',
         'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',

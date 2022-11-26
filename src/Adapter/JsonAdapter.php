@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-/*
- * (c) Jeroen van den Enden <info@endroid.nl>
- *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
- */
-
 namespace Endroid\SimpleSpreadsheet\Adapter;
 
-class JsonAdapter extends ArrayAdapter
+class JsonAdapter extends AbstractAdapter
 {
+    private ArrayAdapter $arrayAdapter;
+
+    public function __construct()
+    {
+        $this->arrayAdapter = new ArrayAdapter();
+    }
+
     public function load($data, array $sheetNames = null): array
     {
-        $array = json_decode($data, true);
+        $data = json_decode($data, true);
 
-        return parent::load($data, $sheetNames);
+        return $this->arrayAdapter->load($data, $sheetNames);
     }
 
     public function save(array $data, array $sheetNames = null, array $options = [])
