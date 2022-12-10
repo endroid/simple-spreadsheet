@@ -12,7 +12,7 @@ use Endroid\SimpleSpreadsheet\Adapter\ResponseAdapter;
 use Endroid\SimpleSpreadsheet\Adapter\SpreadsheetAdapter;
 use Endroid\SimpleSpreadsheet\Exception\SimpleSpreadsheetException;
 
-class SimpleSpreadsheet
+final class SimpleSpreadsheet
 {
     /** @var array<array<mixed>> */
     private array $sheets = [];

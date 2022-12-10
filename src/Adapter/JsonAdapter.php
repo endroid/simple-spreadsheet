@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Endroid\SimpleSpreadsheet\Adapter;
 
-class JsonAdapter extends AbstractAdapter
+use Endroid\SimpleSpreadsheet\Exception\SimpleSpreadsheetException;
+
+final class JsonAdapter extends AbstractAdapter
 {
     private ArrayAdapter $arrayAdapter;
 
@@ -20,9 +22,14 @@ class JsonAdapter extends AbstractAdapter
         return $this->arrayAdapter->load($data, $sheetNames);
     }
 
-    public function save(array $data, array $sheetNames = null, array $options = [])
+    public function save(array $data, array $sheetNames = null, array $options = []): string
     {
-        return json_encode($data);
+        $data = json_encode($data);
+        if (!is_string($data)) {
+            throw new SimpleSpreadsheetException('Unable to encode data to JSON');
+        }
+
+        return $data;
     }
 
     public function supports($data): bool

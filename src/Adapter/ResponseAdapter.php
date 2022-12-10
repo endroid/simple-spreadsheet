@@ -9,8 +9,15 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
-class ResponseAdapter extends SpreadsheetAdapter
+final class ResponseAdapter extends AbstractAdapter
 {
+    private SpreadsheetAdapter $spreadsheetAdapter;
+
+    public function __construct()
+    {
+        $this->spreadsheetAdapter = new SpreadsheetAdapter();
+    }
+
     /** @var array<string, string> */
     private array $contentTypesByExtension = [
         'csv' => 'text/csv',
@@ -23,14 +30,14 @@ class ResponseAdapter extends SpreadsheetAdapter
         throw new SimpleSpreadsheetException('Unable to load from response');
     }
 
-    public function save(array $data, array $sheetNames = null, array $options = [])
+    public function save(array $data, array $sheetNames = null, array $options = []): Response
     {
         if (!isset($options['filename'])) {
             throw new SimpleSpreadsheetException('Please specify the filename via options');
         }
 
         $filename = $options['filename'];
-        $spreadsheet = parent::save($data, $sheetNames, $options);
+        $spreadsheet = $this->spreadsheetAdapter->save($data, $sheetNames, $options);
         $extension = strtolower(substr((string) strrchr($filename, '.'), 1));
         $writer = IOFactory::createWriter($spreadsheet, ucfirst($extension));
 

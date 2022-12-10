@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Endroid\SimpleSpreadsheet\Adapter;
 
-class ArrayAdapter extends AbstractAdapter
+final class ArrayAdapter extends AbstractAdapter
 {
     /** @param array<string, array<mixed>> $data */
     public function load($data, array $sheetNames = null): array
@@ -20,7 +20,8 @@ class ArrayAdapter extends AbstractAdapter
         return $sheets;
     }
 
-    public function save(array $data, array $sheetNames = null, array $options = [])
+    /** @return array<mixed> */
+    public function save(array $data, array $sheetNames = null, array $options = []): array
     {
         $sheets = [];
 

@@ -7,29 +7,34 @@ namespace Endroid\SimpleSpreadsheet\Adapter;
 use Endroid\SimpleSpreadsheet\Exception\SimpleSpreadsheetException;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
-class FileAdapter extends SpreadsheetAdapter
+final class FileAdapter extends AbstractAdapter
 {
+    private SpreadsheetAdapter $spreadsheetAdapter;
+
+    public function __construct()
+    {
+        $this->spreadsheetAdapter = new SpreadsheetAdapter();
+    }
+
     public function load($data, array $sheetNames = null): array
     {
         $spreadsheet = IOFactory::load($data);
 
-        return parent::load($spreadsheet, $sheetNames);
+        return $this->spreadsheetAdapter->load($spreadsheet, $sheetNames);
     }
 
-    public function save(array $data, array $sheetNames = null, array $options = [])
+    public function save(array $data, array $sheetNames = null, array $options = []): void
     {
         if (!isset($options['path'])) {
             throw new SimpleSpreadsheetException('Please specify the output path via options');
         }
 
         $path = $options['path'];
-        $spreadsheet = parent::save($data, $sheetNames, $options);
+        $spreadsheet = $this->spreadsheetAdapter->save($data, $sheetNames, $options);
         $extension = strtolower(substr((string) strrchr($path, '.'), 1));
         $writer = IOFactory::createWriter($spreadsheet, ucfirst($extension));
 
         $writer->save($path);
-
-        return null;
     }
 
     public function supports($data): bool

@@ -7,7 +7,7 @@ namespace Endroid\SimpleSpreadsheet\Adapter;
 use Endroid\SimpleSpreadsheet\Exception\SimpleSpreadsheetException;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
-class SpreadsheetAdapter extends AbstractAdapter
+final class SpreadsheetAdapter extends AbstractAdapter
 {
     public function load($data, array $sheetNames = null): array
     {
@@ -67,7 +67,7 @@ class SpreadsheetAdapter extends AbstractAdapter
         return $sheets;
     }
 
-    public function save(array $data, array $sheetNames = null, array $options = [])
+    public function save(array $data, array $sheetNames = null, array $options = []): Spreadsheet
     {
         $spreadsheet = new Spreadsheet();
         $spreadsheet->removeSheetByIndex(0);
