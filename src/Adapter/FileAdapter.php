@@ -9,11 +9,9 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 final class FileAdapter extends AbstractAdapter
 {
-    private SpreadsheetAdapter $spreadsheetAdapter;
-
-    public function __construct()
-    {
-        $this->spreadsheetAdapter = new SpreadsheetAdapter();
+    public function __construct(
+        private readonly SpreadsheetAdapter $spreadsheetAdapter = new SpreadsheetAdapter()
+    ) {
     }
 
     public function load($data, array $sheetNames = null): array

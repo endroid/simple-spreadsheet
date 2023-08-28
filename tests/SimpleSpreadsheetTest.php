@@ -11,12 +11,12 @@ use Endroid\SimpleSpreadsheet\SimpleSpreadsheet;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Response;
 
-class SimpleSpreadsheetTest extends TestCase
+final class SimpleSpreadsheetTest extends TestCase
 {
     /**
      * @testdox Append sheets and rows
      */
-    public function testAppend()
+    public function testAppend(): void
     {
         $spreadsheet = $this->loadSpreadsheet();
 

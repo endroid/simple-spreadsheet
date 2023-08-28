@@ -8,11 +8,9 @@ use Endroid\SimpleSpreadsheet\Exception\SimpleSpreadsheetException;
 
 final class JsonAdapter extends AbstractAdapter
 {
-    private ArrayAdapter $arrayAdapter;
-
-    public function __construct()
-    {
-        $this->arrayAdapter = new ArrayAdapter();
+    public function __construct(
+        private readonly ArrayAdapter $arrayAdapter = new ArrayAdapter()
+    ) {
     }
 
     public function load($data, array $sheetNames = null): array

@@ -11,15 +11,13 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 final class ResponseAdapter extends AbstractAdapter
 {
-    private SpreadsheetAdapter $spreadsheetAdapter;
-
-    public function __construct()
-    {
-        $this->spreadsheetAdapter = new SpreadsheetAdapter();
+    public function __construct(
+        private SpreadsheetAdapter $spreadsheetAdapter = new SpreadsheetAdapter()
+    ) {
     }
 
     /** @var array<string, string> */
-    private array $contentTypesByExtension = [
+    private const CONTENT_TYPES_BY_EXTENSION = [
         'csv' => 'text/csv',
         'xls' => 'application/vnd.ms-excel',
         'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -47,7 +45,7 @@ final class ResponseAdapter extends AbstractAdapter
 
         $response = new Response($contents);
         $response->headers->add([
-            'Content-Type' => $this->contentTypesByExtension[$extension],
+            'Content-Type' => self::CONTENT_TYPES_BY_EXTENSION[$extension],
             'Content-Disposition' => $response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_INLINE, $filename),
         ]);
 
