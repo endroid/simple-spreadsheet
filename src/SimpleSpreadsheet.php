@@ -51,7 +51,7 @@ final class SimpleSpreadsheet
      * @param mixed              $data
      * @param array<string>|null $sheetNames
      */
-    public function load($data, ?array $sheetNames = null): void
+    public function load($data, array $sheetNames = null): void
     {
         foreach ($this->adapters as $adapter) {
             if ($adapter->supports($data)) {
