@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 final class ResponseAdapter extends AbstractAdapter
 {
     public function __construct(
-        private SpreadsheetAdapter $spreadsheetAdapter = new SpreadsheetAdapter()
+        private readonly SpreadsheetAdapter $spreadsheetAdapter = new SpreadsheetAdapter()
     ) {
     }
 
