@@ -17,7 +17,7 @@
         "symfony/http-foundation": "^5.4||^6.4||^7.0"
     },
     "require-dev": {
-        "endroid/quality": "dev-master"
+        "endroid/quality": "dev-main"
     },
     "autoload": {
         "psr-4": {
@@ -34,7 +34,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "3.x-dev"
+            "dev-main": "3.x-dev"
         }
     },
     "config": {
