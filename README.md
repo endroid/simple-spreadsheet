@@ -41,7 +41,7 @@ $spreadsheet->load([
 $spreadsheet->save(FileAdapter::class, ['Players'], ['filename' => 'players.csv']);
 ```
 
-You can also use the saveToString and getHeadersByFilename methods to build a
+You can also use the `saveToString` and `getHeadersByFilename` methods to build a
 Response object instead of directly outputting to the browser.
 
 ## Versioning
