@@ -7,9 +7,17 @@ namespace Endroid\SimpleSpreadsheet\Adapter;
 use Endroid\SimpleSpreadsheet\Exception\SimpleSpreadsheetException;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
-final class SpreadsheetAdapter extends AbstractAdapter
+/**
+ * @implements AdapterInterface<Spreadsheet, Spreadsheet>
+ */
+final readonly class SpreadsheetAdapter implements AdapterInterface
 {
-    public function load($data, array $sheetNames = null): array
+    public function supports(mixed $data): bool
+    {
+        return $data instanceof Spreadsheet;
+    }
+
+    public function load(mixed $data, ?array $sheetNames = null): array
     {
         if (!$data instanceof Spreadsheet) {
             throw new SimpleSpreadsheetException('Invalid spreadsheet data');
@@ -67,7 +75,7 @@ final class SpreadsheetAdapter extends AbstractAdapter
         return $sheets;
     }
 
-    public function save(array $data, array $sheetNames = null, array $options = []): Spreadsheet
+    public function save(array $data, ?array $sheetNames = null, array $options = []): Spreadsheet
     {
         $spreadsheet = new Spreadsheet();
         $spreadsheet->removeSheetByIndex(0);
@@ -106,10 +114,5 @@ final class SpreadsheetAdapter extends AbstractAdapter
         }
 
         return $spreadsheet;
-    }
-
-    public function supports($data): bool
-    {
-        return $data instanceof Spreadsheet;
     }
 }

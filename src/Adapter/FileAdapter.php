@@ -7,21 +7,33 @@ namespace Endroid\SimpleSpreadsheet\Adapter;
 use Endroid\SimpleSpreadsheet\Exception\SimpleSpreadsheetException;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
-final class FileAdapter extends AbstractAdapter
+/**
+ * @implements AdapterInterface<string, null>
+ */
+final readonly class FileAdapter implements AdapterInterface
 {
     public function __construct(
-        private readonly SpreadsheetAdapter $spreadsheetAdapter = new SpreadsheetAdapter()
+        private SpreadsheetAdapter $spreadsheetAdapter = new SpreadsheetAdapter(),
     ) {
     }
 
-    public function load($data, array $sheetNames = null): array
+    public function supports(mixed $data): bool
+    {
+        if (!is_string($data)) {
+            return false;
+        }
+
+        return file_exists($data);
+    }
+
+    public function load(mixed $data, ?array $sheetNames = null): array
     {
         $spreadsheet = IOFactory::load($data);
 
         return $this->spreadsheetAdapter->load($spreadsheet, $sheetNames);
     }
 
-    public function save(array $data, array $sheetNames = null, array $options = []): void
+    public function save(array $data, ?array $sheetNames = null, array $options = []): mixed
     {
         if (!isset($options['path'])) {
             throw new SimpleSpreadsheetException('Please specify the output path via options');
@@ -33,14 +45,7 @@ final class FileAdapter extends AbstractAdapter
         $writer = IOFactory::createWriter($spreadsheet, ucfirst($extension));
 
         $writer->save($path);
-    }
 
-    public function supports($data): bool
-    {
-        if (!is_string($data)) {
-            return false;
-        }
-
-        return file_exists($data);
+        return null;
     }
 }

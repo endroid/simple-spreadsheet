@@ -17,7 +17,7 @@ final class SimpleSpreadsheet
     /** @var array<array<mixed>> */
     private array $sheets = [];
 
-    /** @var array<AdapterInterface> */
+    /** @var array<AdapterInterface<mixed, mixed>> */
     private array $adapters = [];
 
     public function __construct()
@@ -34,24 +34,16 @@ final class SimpleSpreadsheet
         $this->registerAdapter(new SpreadsheetAdapter());
     }
 
+    /** @param AdapterInterface<mixed, mixed> $adapter */
     public function registerAdapter(AdapterInterface $adapter): void
     {
         $this->adapters[get_class($adapter)] = $adapter;
-        $this->prioritizeAdapters();
-    }
-
-    private function prioritizeAdapters(): void
-    {
-        uasort($this->adapters, function (AdapterInterface $adapter1, AdapterInterface $adapter2) {
-            return $adapter2->getPriority() - $adapter1->getPriority();
-        });
     }
 
     /**
-     * @param mixed              $data
      * @param array<string>|null $sheetNames
      */
-    public function load($data, array $sheetNames = null): void
+    public function load(mixed $data, ?array $sheetNames = null): void
     {
         foreach ($this->adapters as $adapter) {
             if ($adapter->supports($data)) {
@@ -112,10 +104,8 @@ final class SimpleSpreadsheet
     /**
      * @param array<string>|null $sheetNames
      * @param array<mixed>       $options
-     *
-     * @return mixed
      */
-    public function save(string $adapterClass, array $sheetNames = null, array $options = [])
+    public function save(string $adapterClass, ?array $sheetNames = null, array $options = []): mixed
     {
         $adapter = $this->adapters[$adapterClass];
 

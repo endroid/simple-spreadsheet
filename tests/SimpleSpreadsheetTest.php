@@ -8,17 +8,17 @@ use Endroid\SimpleSpreadsheet\Adapter\ArrayAdapter;
 use Endroid\SimpleSpreadsheet\Adapter\FileAdapter;
 use Endroid\SimpleSpreadsheet\Adapter\ResponseAdapter;
 use Endroid\SimpleSpreadsheet\SimpleSpreadsheet;
+use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Response;
 
 final class SimpleSpreadsheetTest extends TestCase
 {
-    /**
-     * @testdox Append sheets and rows
-     */
+    #[TestDox('Append sheets and rows')]
     public function testAppend(): void
     {
-        $spreadsheet = $this->loadSpreadsheet();
+        $spreadsheet = new SimpleSpreadsheet();
+        $spreadsheet->load(__DIR__.'/data/data.xlsx');
 
         $spreadsheet->load([
             'sheet1' => [
@@ -38,12 +38,11 @@ final class SimpleSpreadsheetTest extends TestCase
         $this->assertNull($data['sheet1'][1]['col2']);
     }
 
-    /**
-     * @testdox Save to file
-     */
+    #[TestDox('Save to file')]
     public function testSaveToFile(): void
     {
-        $spreadsheet = $this->loadSpreadsheet();
+        $spreadsheet = new SimpleSpreadsheet();
+        $spreadsheet->load(__DIR__.'/data/data.xlsx');
 
         if (!is_dir(__DIR__.'/output')) {
             mkdir(__DIR__.'/output');
@@ -59,12 +58,11 @@ final class SimpleSpreadsheetTest extends TestCase
         $this->assertFileExists($targetPath);
     }
 
-    /**
-     * @testdox Save to response object
-     */
+    #[TestDox('Save to response object')]
     public function testSaveToResponse(): void
     {
-        $spreadsheet = $this->loadSpreadsheet();
+        $spreadsheet = new SimpleSpreadsheet();
+        $spreadsheet->load(__DIR__.'/data/data.xlsx');
 
         $response = $spreadsheet->save(
             ResponseAdapter::class,
@@ -73,13 +71,5 @@ final class SimpleSpreadsheetTest extends TestCase
         );
 
         $this->assertInstanceOf(Response::class, $response);
-    }
-
-    private function loadSpreadsheet(): SimpleSpreadsheet
-    {
-        $spreadsheet = new SimpleSpreadsheet();
-        $spreadsheet->load(__DIR__.'/data/data.xlsx');
-
-        return $spreadsheet;
     }
 }

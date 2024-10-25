@@ -9,10 +9,13 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
-final class ResponseAdapter extends AbstractAdapter
+/**
+ * @implements AdapterInterface<Response, Response>
+ */
+final readonly class ResponseAdapter implements AdapterInterface
 {
     public function __construct(
-        private readonly SpreadsheetAdapter $spreadsheetAdapter = new SpreadsheetAdapter()
+        private SpreadsheetAdapter $spreadsheetAdapter = new SpreadsheetAdapter(),
     ) {
     }
 
@@ -23,12 +26,17 @@ final class ResponseAdapter extends AbstractAdapter
         'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     ];
 
-    public function load($data, array $sheetNames = null): array
+    public function supports(mixed $data): bool
     {
         throw new SimpleSpreadsheetException('Unable to load from response');
     }
 
-    public function save(array $data, array $sheetNames = null, array $options = []): Response
+    public function load(mixed $data, ?array $sheetNames = null): array
+    {
+        throw new SimpleSpreadsheetException('Unable to load from response');
+    }
+
+    public function save(array $data, ?array $sheetNames = null, array $options = []): Response
     {
         if (!isset($options['filename'])) {
             throw new SimpleSpreadsheetException('Please specify the filename via options');
@@ -50,10 +58,5 @@ final class ResponseAdapter extends AbstractAdapter
         ]);
 
         return $response;
-    }
-
-    public function supports($data): bool
-    {
-        throw new SimpleSpreadsheetException('Unable to load from response');
     }
 }

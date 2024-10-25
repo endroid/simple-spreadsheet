@@ -6,31 +6,17 @@ namespace Endroid\SimpleSpreadsheet\Adapter;
 
 use Endroid\SimpleSpreadsheet\Exception\SimpleSpreadsheetException;
 
-final class JsonAdapter extends AbstractAdapter
+/**
+ * @implements AdapterInterface<string, string>
+ */
+final readonly class JsonAdapter implements AdapterInterface
 {
     public function __construct(
-        private readonly ArrayAdapter $arrayAdapter = new ArrayAdapter()
+        private ArrayAdapter $arrayAdapter = new ArrayAdapter(),
     ) {
     }
 
-    public function load($data, array $sheetNames = null): array
-    {
-        $data = json_decode($data, true);
-
-        return $this->arrayAdapter->load($data, $sheetNames);
-    }
-
-    public function save(array $data, array $sheetNames = null, array $options = []): string
-    {
-        $data = json_encode($data);
-        if (!is_string($data)) {
-            throw new SimpleSpreadsheetException('Unable to encode data to JSON');
-        }
-
-        return $data;
-    }
-
-    public function supports($data): bool
+    public function supports(mixed $data): bool
     {
         if (!is_string($data)) {
             return false;
@@ -43,5 +29,22 @@ final class JsonAdapter extends AbstractAdapter
         }
 
         return true;
+    }
+
+    public function load(mixed $data, ?array $sheetNames = null): array
+    {
+        $data = json_decode($data, true);
+
+        return $this->arrayAdapter->load($data, $sheetNames);
+    }
+
+    public function save(array $data, ?array $sheetNames = null, array $options = []): mixed
+    {
+        $data = json_encode($data);
+        if (!is_string($data)) {
+            throw new SimpleSpreadsheetException('Unable to encode data to JSON');
+        }
+
+        return $data;
     }
 }
