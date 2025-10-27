@@ -109,6 +109,7 @@ final class SimpleSpreadsheet
     {
         $adapter = $this->adapters[$adapterClass];
 
+        // @phpstan-ignore instanceof.alwaysTrue
         if (!$adapter instanceof AdapterInterface) {
             throw new SimpleSpreadsheetException(sprintf('Adapter class "%s" not found', $adapterClass));
         }

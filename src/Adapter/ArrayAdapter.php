@@ -11,11 +11,13 @@ final readonly class ArrayAdapter implements AdapterInterface
 {
     public function supports(mixed $data): bool
     {
+        // @phpstan-ignore function.alreadyNarrowedType
         if (!is_array($data)) {
             return false;
         }
 
         foreach ($data as $sheet) {
+            // @phpstan-ignore function.alreadyNarrowedType
             if (!is_array($sheet)) {
                 return false;
             }

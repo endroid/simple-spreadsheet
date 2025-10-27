@@ -14,11 +14,13 @@ final readonly class SpreadsheetAdapter implements AdapterInterface
 {
     public function supports(mixed $data): bool
     {
+        // @phpstan-ignore instanceof.alwaysTrue
         return $data instanceof Spreadsheet;
     }
 
     public function load(mixed $data, ?array $sheetNames = null): array
     {
+        // @phpstan-ignore instanceof.alwaysTrue
         if (!$data instanceof Spreadsheet) {
             throw new SimpleSpreadsheetException('Invalid spreadsheet data');
         }
@@ -30,7 +32,7 @@ final readonly class SpreadsheetAdapter implements AdapterInterface
                 $sheetData = $sheet->toArray('', false, false);
 
                 // Remove possible empty leading rows
-                while ('' == $sheetData[0][0] && count($sheetData) > 0) {
+                while ('' == $sheetData[0][0]) {
                     array_shift($sheetData);
                 }
 

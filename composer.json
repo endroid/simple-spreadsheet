@@ -12,9 +12,9 @@
         }
     ],
     "require": {
-        "php": "^8.2",
-        "phpoffice/phpspreadsheet": "^3.3",
-        "symfony/http-foundation": "^5.4||^6.4||^7.0"
+        "php": "^8.4",
+        "phpoffice/phpspreadsheet": "^5.0",
+        "symfony/http-foundation": "^6.4||^7.4||^8.0"
     },
     "require-dev": {
         "endroid/quality": "dev-main"

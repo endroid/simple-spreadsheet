@@ -19,6 +19,7 @@ final readonly class FileAdapter implements AdapterInterface
 
     public function supports(mixed $data): bool
     {
+        // @phpstan-ignore function.alreadyNarrowedType
         if (!is_string($data)) {
             return false;
         }
