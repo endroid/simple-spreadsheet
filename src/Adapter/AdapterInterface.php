@@ -10,19 +10,18 @@ namespace Endroid\SimpleSpreadsheet\Adapter;
  */
 interface AdapterInterface
 {
-    /** @param T $data */
     public function supports(mixed $data): bool;
 
     /**
      * @param T                  $data
      * @param array<string>|null $sheetNames
      *
-     * @return array<string, array<mixed>>
+     * @return array<array-key, array<mixed>>
      */
     public function load(mixed $data, ?array $sheetNames = null): array;
 
     /**
-     * @param array<string, array<mixed>> $data
+     * @param array<array-key, array<mixed>> $data
      * @param array<string>|null          $sheetNames
      * @param array<mixed>                $options
      *

@@ -14,7 +14,7 @@ use Endroid\SimpleSpreadsheet\Exception\SimpleSpreadsheetException;
 
 final class SimpleSpreadsheet
 {
-    /** @var array<array<mixed>> */
+    /** @var array<array-key, array<mixed>> */
     private array $sheets = [];
 
     /** @var array<AdapterInterface<mixed, mixed>> */
@@ -46,31 +46,30 @@ final class SimpleSpreadsheet
     public function load(mixed $data, ?array $sheetNames = null): void
     {
         foreach ($this->adapters as $adapter) {
-            if ($adapter->supports($data)) {
-                $sheets = $adapter->load($data, $sheetNames);
-                $this->append($sheets);
-                break;
+            if (!$adapter->supports($data)) {
+                continue;
             }
+
+            $sheets = $adapter->load($data, $sheetNames);
+            $this->append($sheets);
+            break;
         }
     }
 
-    /** @param array<string, array<mixed>> $sheets */
+    /** @param array<array-key, array<mixed>> $sheets */
     private function append(array $sheets): void
     {
         foreach ($sheets as $sheetName => &$sheetData) {
-            if (!isset($this->sheets[$sheetName])) {
+            if (null === ($this->sheets[$sheetName] ?? null)) {
                 $this->sheets[$sheetName] = [];
             }
-            while (count($sheetData) > 0) {
-                $sheetDataRow = array_shift($sheetData);
-                $this->sheets[$sheetName][] = $sheetDataRow;
-            }
+            array_push($this->sheets[$sheetName], ...array_values($sheetData));
         }
     }
 
     public function createSheet(string $sheetName): void
     {
-        if (isset($this->sheets[$sheetName])) {
+        if (null !== ($this->sheets[$sheetName] ?? null)) {
             throw new SimpleSpreadsheetException(sprintf('Sheet with name "%s" already exists', $sheetName));
         }
 
@@ -85,7 +84,7 @@ final class SimpleSpreadsheet
 
     public function duplicateSheet(string $sourceName, string $targetName): void
     {
-        if (!isset($this->sheets[$sourceName])) {
+        if (null === ($this->sheets[$sourceName] ?? null)) {
             throw new SimpleSpreadsheetException(sprintf('Sheet with name "%s" does not exist', $sourceName));
         }
 
@@ -94,7 +93,7 @@ final class SimpleSpreadsheet
 
     public function removeSheet(string $sheetName): void
     {
-        if (!isset($this->sheets[$sheetName])) {
+        if (null === ($this->sheets[$sheetName] ?? null)) {
             throw new SimpleSpreadsheetException(sprintf('Sheet with name "%s" does not exist', $sheetName));
         }
 
@@ -107,9 +106,8 @@ final class SimpleSpreadsheet
      */
     public function save(string $adapterClass, ?array $sheetNames = null, array $options = []): mixed
     {
-        $adapter = $this->adapters[$adapterClass];
+        $adapter = $this->adapters[$adapterClass] ?? null;
 
-        // @phpstan-ignore instanceof.alwaysTrue
         if (!$adapter instanceof AdapterInterface) {
             throw new SimpleSpreadsheetException(sprintf('Adapter class "%s" not found', $adapterClass));
         }

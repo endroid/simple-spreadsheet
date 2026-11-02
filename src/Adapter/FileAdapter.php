@@ -14,12 +14,11 @@ final readonly class FileAdapter implements AdapterInterface
 {
     public function __construct(
         private SpreadsheetAdapter $spreadsheetAdapter = new SpreadsheetAdapter(),
-    ) {
-    }
+    ) {}
 
+    #[\Override]
     public function supports(mixed $data): bool
     {
-        // @phpstan-ignore function.alreadyNarrowedType
         if (!is_string($data)) {
             return false;
         }
@@ -27,6 +26,7 @@ final readonly class FileAdapter implements AdapterInterface
         return file_exists($data);
     }
 
+    #[\Override]
     public function load(mixed $data, ?array $sheetNames = null): array
     {
         $spreadsheet = IOFactory::load($data);
@@ -34,15 +34,16 @@ final readonly class FileAdapter implements AdapterInterface
         return $this->spreadsheetAdapter->load($spreadsheet, $sheetNames);
     }
 
+    #[\Override]
     public function save(array $data, ?array $sheetNames = null, array $options = []): mixed
     {
-        if (!isset($options['path'])) {
+        if (!is_string($options['path'] ?? null)) {
             throw new SimpleSpreadsheetException('Please specify the output path via options');
         }
 
         $path = $options['path'];
         $spreadsheet = $this->spreadsheetAdapter->save($data, $sheetNames, $options);
-        $extension = strtolower(substr((string) strrchr($path, '.'), 1));
+        $extension = strtolower(substr((string) strrchr($path, needle: '.'), offset: 1));
         $writer = IOFactory::createWriter($spreadsheet, ucfirst($extension));
 
         $writer->save($path);
