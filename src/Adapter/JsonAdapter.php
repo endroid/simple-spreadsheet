@@ -13,32 +13,25 @@ final readonly class JsonAdapter implements AdapterInterface
 {
     public function __construct(
         private ArrayAdapter $arrayAdapter = new ArrayAdapter(),
-    ) {
-    }
+    ) {}
 
+    #[\Override]
     public function supports(mixed $data): bool
     {
-        // @phpstan-ignore function.alreadyNarrowedType
         if (!is_string($data)) {
             return false;
         }
 
-        $data = json_decode($data, true);
-
-        if (!is_array($data)) {
-            return false;
-        }
-
-        return true;
+        return $this->arrayAdapter->supports(json_decode($data, associative: true));
     }
 
+    #[\Override]
     public function load(mixed $data, ?array $sheetNames = null): array
     {
-        $data = json_decode($data, true);
-
-        return $this->arrayAdapter->load($data, $sheetNames);
+        return $this->arrayAdapter->load(json_decode($data, associative: true), $sheetNames);
     }
 
+    #[\Override]
     public function save(array $data, ?array $sheetNames = null, array $options = []): mixed
     {
         $data = json_encode($data);
